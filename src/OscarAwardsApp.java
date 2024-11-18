@@ -9,10 +9,11 @@ public class OscarAwardsApp extends JFrame {
     private final OscarAwardData datas = new OscarAwardData();
     private final OscarAwardFilter awardFilter = new OscarAwardFilter();
     private List<OscarAward> awardsData;
+    public JPanel panel = new JPanel();
 
     public OscarAwardsApp() {
         setTitle("Oscar Awards Data 1927-2018");
-        setSize(800,600);
+        setSize(900,700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initializeComponents();
         loadData();
@@ -22,6 +23,12 @@ public class OscarAwardsApp extends JFrame {
         tableModel = new DefaultTableModel(new String[]{"Screen Year", "Ceremony Year", "Category", "Nominee","Film Title", "Winner"}, 0);
         JTable awardTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(awardTable);
+
+        JPanel mainPanel = new JPanel();
+        LayoutManagerController layoutController = new LayoutManagerController(mainPanel);
+
+        layoutController.applyFlowLayout(10,10);
+        layoutController.applyPadding(20,20,20,20);
 
         JButton filterButton = new JButton("Filter by Category");
         filterButton.addActionListener(_ -> showFilterDialog());
@@ -35,13 +42,30 @@ public class OscarAwardsApp extends JFrame {
         JButton clearFilterButton = new JButton("Clear Filter");
         clearFilterButton.addActionListener(_ -> loadData());
 
-        JPanel panel = new JPanel();
+        JButton flowLayoutButton = new JButton("Flow Layout");
+        flowLayoutButton.addActionListener(_ -> switchLayout(new FlowLayout()));
+
+        JButton gridLayoutButton = new JButton("Grid Layout");
+        gridLayoutButton.addActionListener(_ -> switchLayout(new GridLayout(2,2)));
+
+        JButton borderLayoutButton = new JButton("Border Layout");
+        borderLayoutButton.addActionListener(_ -> switchLayout(new BorderLayout()));
+
+        //JPanel panel = new JPanel();
         panel.add(filterButton);
         panel.add(filterByYearButton);
         panel.add(filterByCeremonyYearButton);
         panel.add(clearFilterButton);
+        panel.add(flowLayoutButton);
+        panel.add(borderLayoutButton);
+        panel.add(gridLayoutButton);
         add(scrollPane, BorderLayout.CENTER);
         add(panel, BorderLayout.NORTH);
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(panel, BorderLayout.SOUTH);
+
+        add(mainPanel);
     }
 
     private void loadData() {
@@ -60,6 +84,14 @@ public class OscarAwardsApp extends JFrame {
                 award.isWinner()
         }));
 
+    }
+
+    private void switchLayout(LayoutManager layout) {
+
+        panel.setLayout(layout);
+
+        getContentPane().revalidate();
+        getContentPane().repaint();
     }
 
     private void showFilterDialog() {
